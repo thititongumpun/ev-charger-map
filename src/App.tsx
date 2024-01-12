@@ -15,7 +15,14 @@ function App() {
     longitude: 100.488589,
   });
 
-  console.log(data);
+  // console.log(data);
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition((position) => {
+      const latitude = position.coords.latitude;
+      const longitude = position.coords.longitude;
+      setLocation({ latitude, longitude });
+    });
+  }, []);
 
   useEffect(() => {
     async function fetchData() {
