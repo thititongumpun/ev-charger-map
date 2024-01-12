@@ -8,6 +8,17 @@ import {
 } from "react-leaflet";
 import { ApiResponse } from "./types/ApiResponse";
 
+import L from "leaflet";
+import icon from "leaflet/dist/images/marker-icon.png";
+import iconShadow from "leaflet/dist/images/marker-shadow.png";
+
+const DefaultIcon = L.icon({
+  iconUrl: icon,
+  shadowUrl: iconShadow,
+});
+
+L.Marker.prototype.options.icon = DefaultIcon;
+
 function App() {
   const [data, setData] = useState<ApiResponse>();
   const [location, setLocation] = useState({
@@ -75,7 +86,7 @@ function App() {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         <Marker position={[location.latitude, location.longitude]}>
-          <Tooltip direction="right" offset={[0, 0]} opacity={1} permanent>
+          <Tooltip direction="top" offset={[0, 0]} opacity={1} permanent>
             You are here
           </Tooltip>
         </Marker>
