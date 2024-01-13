@@ -7,6 +7,7 @@ import {
   Tooltip,
   LayersControl,
   LayerGroup,
+  Popup,
 } from "react-leaflet";
 import { ApiResponse } from "../types/ApiResponse";
 import * as _ from "lodash";
@@ -27,53 +28,64 @@ function Map({ lat, lon }: { lat: number; lon: number }) {
   );
 
   return (
-    <MapContainer
-      center={[lat, lon]}
-      zoom={13}
-      scrollWheelZoom={false}
-      style={{ minHeight: "100vh" }}
-    >
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
-      <LayersControl position="topright">
-        <LayersControl.Overlay checked name="You">
-          <Marker position={[lat, lon]}>
-            <Tooltip direction="top" offset={[0, 0]} opacity={1} permanent>
-              You are here
-            </Tooltip>
-          </Marker>
-        </LayersControl.Overlay>
-        {Object.keys(stationNames).map((name) => (
-          <LayersControl.Overlay key={name} checked name={name}>
-            <LayerGroup>
-              {stationNames[name].map((station) => (
-                <Circle
-                  key={station.id}
-                  center={[station.position.lat, station.position.lon]}
-                  pathOptions={{ fillColor: "red" }}
-                  radius={50}
-                  stroke={true}
-                  color="red"
-                  fillOpacity={0.5}
-                  children={
-                    <Tooltip
-                      direction="top"
-                      offset={[0, 0]}
-                      opacity={1}
-                      permanent
-                    >
-                      {station.poi.name} {(station.dist / 1000).toFixed(2)} กม
-                    </Tooltip>
-                  }
-                />
-              ))}
-            </LayerGroup>
+    <>
+      <MapContainer
+        center={[lat, lon]}
+        zoom={14}
+        scrollWheelZoom={true}
+        style={{
+          height: "100%",
+          width: "100vw",
+          position: "relative",
+          zIndex: 3,
+        }}
+      >
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        <LayersControl position="topright">
+          <LayersControl.Overlay checked name="You">
+            <Marker position={[lat, lon]}>
+              <Tooltip direction="right" offset={[0, 0]} opacity={1} permanent>
+                You are here
+              </Tooltip>
+            </Marker>
           </LayersControl.Overlay>
-        ))}
-      </LayersControl>
-    </MapContainer>
+          {Object.keys(stationNames).map((name) => (
+            <LayersControl.Overlay key={name} checked name={name}>
+              <LayerGroup>
+                {stationNames[name].map((station) => (
+                  <Circle
+                    key={station.id}
+                    center={[station.position.lat, station.position.lon]}
+                    pathOptions={{ fillColor: "red" }}
+                    radius={30}
+                    stroke={true}
+                    color="red"
+                    fillOpacity={0.5}
+                    children={
+                      <>
+                        <Popup>{station.address.freeformAddress}</Popup>
+                        <Tooltip
+                          direction="top"
+                          offset={[0, 0]}
+                          opacity={1}
+                          permanent
+                        >
+                          {station.poi.name} {(station.dist / 1000).toFixed(2)}{" "}
+                          กม
+                        </Tooltip>
+                      </>
+                    }
+                  />
+                ))}
+              </LayerGroup>
+            </LayersControl.Overlay>
+          ))}
+        </LayersControl>
+      </MapContainer>
+    </>
   );
 }
 

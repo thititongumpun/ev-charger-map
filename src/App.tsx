@@ -16,9 +16,10 @@ function App() {
   const { coords, isGeolocationAvailable, isGeolocationEnabled } =
     useGeolocated({
       positionOptions: {
-        enableHighAccuracy: false,
+        enableHighAccuracy: true,
       },
       userDecisionTimeout: 5000,
+      watchPosition: true,
     });
 
   return (
@@ -28,7 +29,9 @@ function App() {
       ) : !isGeolocationEnabled ? (
         <div>Geolocation is not enabled.</div>
       ) : coords ? (
-        <Map lat={coords.latitude} lon={coords.longitude} />
+        <div style={{ width: "100%", height: "100%", position: "fixed" }}>
+          <Map lat={coords.latitude} lon={coords.longitude} />
+        </div>
       ) : (
         <div>Getting the location data&hellip;</div>
       )}
