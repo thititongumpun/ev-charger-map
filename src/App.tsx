@@ -19,7 +19,7 @@ function App() {
         enableHighAccuracy: true,
       },
       userDecisionTimeout: 5000,
-      watchPosition: true,
+      watchPosition: false,
     });
 
   // const { data: ip, isLoading } = useSWR<{ ip: string }>(
