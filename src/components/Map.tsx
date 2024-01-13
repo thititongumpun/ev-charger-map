@@ -2,7 +2,6 @@ import useSWR from "swr";
 import {
   MapContainer,
   TileLayer,
-  Marker,
   Circle,
   Tooltip,
   LayersControl,
@@ -11,12 +10,16 @@ import {
 } from "react-leaflet";
 import { ApiResponse } from "../types/ApiResponse";
 import * as _ from "lodash";
+import SetViewOnClick from "./SetViewOnClick";
+import MeMarker from "./Marker";
+import { fetcher } from "../lib/fetcher";
 
 function Map({ lat, lon }: { lat: number; lon: number }) {
   const { data, isLoading } = useSWR<ApiResponse>(
     `nearbySearch/.json?lat=${lat}&lon=${lon}&radius=10000&language=th-TH&categorySet=7309&view=Unified&relatedPois=off&key=${
       import.meta.env.VITE_API_KEY
-    }`
+    }`,
+    fetcher
   );
 
   if (isLoading) return <div>Loading...</div>;
@@ -37,7 +40,6 @@ function Map({ lat, lon }: { lat: number; lon: number }) {
           height: "100%",
           width: "100vw",
           position: "relative",
-          zIndex: 3,
         }}
       >
         <TileLayer
@@ -46,11 +48,12 @@ function Map({ lat, lon }: { lat: number; lon: number }) {
         />
         <LayersControl position="topright">
           <LayersControl.Overlay checked name="You">
-            <Marker position={[lat, lon]}>
+            {/* <Marker position={[lat, lon]}>
               <Tooltip direction="right" offset={[0, 0]} opacity={1} permanent>
                 You are here
               </Tooltip>
-            </Marker>
+            </Marker> */}
+            <MeMarker lat={lat} lon={lon} />
           </LayersControl.Overlay>
           {Object.keys(stationNames).map((name) => (
             <LayersControl.Overlay key={name} checked name={name}>
@@ -84,6 +87,7 @@ function Map({ lat, lon }: { lat: number; lon: number }) {
             </LayersControl.Overlay>
           ))}
         </LayersControl>
+        <SetViewOnClick />
       </MapContainer>
     </>
   );

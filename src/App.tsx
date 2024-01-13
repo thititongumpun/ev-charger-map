@@ -22,6 +22,11 @@ function App() {
       watchPosition: true,
     });
 
+  // const { data: ip, isLoading } = useSWR<{ ip: string }>(
+  //   "?format=json",
+  //   ipFetcher
+  // );
+
   return (
     <>
       {!isGeolocationAvailable ? (
