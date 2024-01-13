@@ -19,7 +19,7 @@ function App() {
         enableHighAccuracy: true,
       },
       userDecisionTimeout: 5000,
-      watchPosition: false,
+      watchPosition: true,
     });
 
   // const { data: ip, isLoading } = useSWR<{ ip: string }>(
@@ -40,6 +40,7 @@ function App() {
       ) : (
         <div>Getting the location data&hellip;</div>
       )}
+      {/* <Demo /> */}
     </>
   );
 }
