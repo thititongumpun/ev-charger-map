@@ -1,4 +1,3 @@
-// import useSWR from "swr";
 import {
   MapContainer,
   TileLayer,
@@ -14,6 +13,8 @@ import { useDebounce } from "../lib/useDebouce";
 import * as _ from "lodash";
 import { useQuery } from "react-query";
 import { getStations } from "../lib/getStations";
+import * as geolib from "geolib";
+import { GeoBias } from "../types/ApiResponse";
 
 function Map({ lat, lon }: { lat: number; lon: number }) {
   const debounceLatLon = useDebounce({ lat, lon }, 5000);
@@ -28,6 +29,15 @@ function Map({ lat, lon }: { lat: number; lon: number }) {
     data?.results,
     (stationNames) => stationNames.poi.name
   );
+
+  const getDistance = ({ geo }: { geo: GeoBias }) => {
+    const dist = geolib.getPreciseDistance(geo, {
+      lat,
+      lon,
+    });
+
+    return dist;
+  };
 
   return (
     <>
@@ -70,7 +80,10 @@ function Map({ lat, lon }: { lat: number; lon: number }) {
                           opacity={1}
                           permanent
                         >
-                          {station.poi.name} {(station.dist / 1000).toFixed(2)}{" "}
+                          {station.poi.name}{" "}
+                          {(
+                            getDistance({ geo: station.position }) / 1000
+                          ).toFixed(2)}{" "}
                           กม
                         </Tooltip>
                       </>

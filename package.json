@@ -12,6 +12,7 @@
   "dependencies": {
     "@tanstack/react-query-devtools": "^5.17.10",
     "axios": "^1.6.5",
+    "geolib": "^3.3.4",
     "leaflet": "^1.9.4",
     "lodash": "^4.17.21",
     "million": "^2.6.4",
