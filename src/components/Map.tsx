@@ -10,29 +10,19 @@ import {
 } from "react-leaflet";
 import SetViewOnClick from "./SetViewOnClick";
 import MeMarker from "./MeMarker";
-import useSWR from "swr";
-import { ApiResponse } from "../types/ApiResponse";
 import { useDebounce } from "../lib/useDebouce";
-import { fetcher } from "../lib/fetcher";
-// import { ApiResponse } from "../types/ApiResponse";
 import * as _ from "lodash";
-// import { fetcher } from "../lib/fetcher";
+import { useQuery } from "react-query";
+import { getStations } from "../lib/getStations";
 
 function Map({ lat, lon }: { lat: number; lon: number }) {
   const debounceLatLon = useDebounce({ lat, lon }, 5000);
-  const { data, isLoading } = useSWR<ApiResponse>(
-    `nearbySearch/.json?lat=${debounceLatLon.lat}&lon=${
-      debounceLatLon.lon
-    }&radius=10000&language=th-TH&categorySet=7309&view=Unified&relatedPois=off&key=${
-      import.meta.env.VITE_API_KEY
-    }`,
-    fetcher
+  const { data, isLoading } = useQuery("stations", () =>
+    getStations({ lat: debounceLatLon.lat, lng: debounceLatLon.lon })
   );
 
   if (isLoading) return <div>Loading...</div>;
   if (!data) throw new Error();
-
-  console.log(data);
 
   const stationNames = _.groupBy(
     data?.results,
