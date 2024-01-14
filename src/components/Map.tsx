@@ -2,33 +2,42 @@
 import {
   MapContainer,
   TileLayer,
-  // Circle,
-  // Tooltip,
+  Circle,
+  Tooltip,
   LayersControl,
-  // LayerGroup,
-  // Popup,
+  LayerGroup,
+  Popup,
 } from "react-leaflet";
 import SetViewOnClick from "./SetViewOnClick";
 import MeMarker from "./MeMarker";
+import useSWR from "swr";
+import { ApiResponse } from "../types/ApiResponse";
+import { useDebounce } from "../lib/useDebouce";
+import { fetcher } from "../lib/fetcher";
 // import { ApiResponse } from "../types/ApiResponse";
-// import * as _ from "lodash";
+import * as _ from "lodash";
 // import { fetcher } from "../lib/fetcher";
 
 function Map({ lat, lon }: { lat: number; lon: number }) {
-  // const { data, isLoading } = useSWR<ApiResponse>(
-  //   `nearbySearch/.json?lat=${lat}&lon=${lon}&radius=10000&language=th-TH&categorySet=7309&view=Unified&relatedPois=off&key=${
-  //     import.meta.env.VITE_API_KEY
-  //   }`,
-  //   fetcher
-  // );
+  const debounceLatLon = useDebounce({ lat, lon }, 5000);
+  const { data, isLoading } = useSWR<ApiResponse>(
+    `nearbySearch/.json?lat=${debounceLatLon.lat}&lon=${
+      debounceLatLon.lon
+    }&radius=10000&language=th-TH&categorySet=7309&view=Unified&relatedPois=off&key=${
+      import.meta.env.VITE_API_KEY
+    }`,
+    fetcher
+  );
 
-  // if (isLoading) return <div>Loading...</div>;
-  // if (!data) throw new Error();
+  if (isLoading) return <div>Loading...</div>;
+  if (!data) throw new Error();
 
-  // const stationNames = _.groupBy(
-  //   data?.results,
-  //   (stationNames) => stationNames.poi.name
-  // );
+  console.log(data);
+
+  const stationNames = _.groupBy(
+    data?.results,
+    (stationNames) => stationNames.poi.name
+  );
 
   return (
     <>
@@ -48,14 +57,9 @@ function Map({ lat, lon }: { lat: number; lon: number }) {
         />
         <LayersControl position="topright">
           <LayersControl.Overlay checked name="You">
-            {/* <Marker position={[lat, lon]}>
-              <Tooltip direction="right" offset={[0, 0]} opacity={1} permanent>
-                You are here
-              </Tooltip>
-            </Marker> */}
             <MeMarker lat={lat} lon={lon} />
           </LayersControl.Overlay>
-          {/* {Object.keys(stationNames).map((name) => (
+          {Object.keys(stationNames).map((name) => (
             <LayersControl.Overlay key={name} checked name={name}>
               <LayerGroup>
                 {stationNames[name].map((station) => (
@@ -85,7 +89,7 @@ function Map({ lat, lon }: { lat: number; lon: number }) {
                 ))}
               </LayerGroup>
             </LayersControl.Overlay>
-          ))} */}
+          ))}
         </LayersControl>
         <SetViewOnClick />
       </MapContainer>
