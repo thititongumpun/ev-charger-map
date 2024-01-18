@@ -9,8 +9,8 @@ const pwaOptions: Partial<VitePWAOptions> = {
   injectRegister: 'script',
   includeAssets: ['favicon.svg', 'favicon.ico', 'robots.txt', 'apple-touch-icon.png'],
   manifest: {
-    theme_color: "#00000",
-    background_color: "#fffff",
+    theme_color: "#ffffff",
+    background_color: "#ffffff",
     display: "standalone",
     scope: "/",
     start_url: "/",
