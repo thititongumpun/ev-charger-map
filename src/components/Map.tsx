@@ -15,6 +15,7 @@ import { useQuery } from "react-query";
 import { getStations } from "../lib/getStations";
 import * as geolib from "geolib";
 import { GeoBias } from "../types/ApiResponse";
+import Loading from "./Loading";
 
 function Map({ lat, lon }: { lat: number; lon: number }) {
   const debounceLatLon = useDebounce({ lat, lon }, 5000);
@@ -22,7 +23,7 @@ function Map({ lat, lon }: { lat: number; lon: number }) {
     getStations({ lat: debounceLatLon.lat, lng: debounceLatLon.lon })
   );
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <Loading />;
   if (!data) throw new Error();
 
   const stationNames = _.groupBy(
