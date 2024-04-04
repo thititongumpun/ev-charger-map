@@ -46,10 +46,5 @@ const pwaOptions: Partial<VitePWAOptions> = {
 }
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [million.vite({
-    auto: {
-      threshold: 0.05,
-      skip: ["useBadHook", /badVariable/g],
-    },
-  }), react(), VitePWA(pwaOptions)],
+  plugins: [million.vite({ auto: true }), react(), VitePWA(pwaOptions)],
 })

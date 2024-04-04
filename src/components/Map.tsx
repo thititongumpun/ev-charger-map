@@ -31,6 +31,12 @@ function Map({ lat, lon }: { lat: number; lon: number }) {
     (stationNames) => stationNames.poi.name
   );
 
+  Object.keys(stationNames).map((name) => {
+    stationNames[name].map((station) => {
+      console.log(station);
+    });
+  });
+
   const getDistance = ({ geo }: { geo: GeoBias }) => {
     const dist = geolib.getPreciseDistance(geo, {
       lat,
@@ -74,7 +80,18 @@ function Map({ lat, lon }: { lat: number; lon: number }) {
                     fillOpacity={0.5}
                     children={
                       <>
-                        <Popup>{station.address.freeformAddress}</Popup>
+                        <div style={{ whiteSpace: "pre-wrap" }}>
+                          <Popup>
+                            {station.address.freeformAddress} <br />
+                            {station.chargingPark.connectors.length} หัวชาจ{" "}
+                            <br />
+                            {station.chargingPark.connectors.map(
+                              (connector) => (
+                                <>{connector.currentType + " "}</>
+                              )
+                            )}
+                          </Popup>
+                        </div>
                         <Tooltip
                           direction="top"
                           offset={[0, 0]}
