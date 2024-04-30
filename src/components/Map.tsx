@@ -1,11 +1,11 @@
 import {
   MapContainer,
   TileLayer,
-  Circle,
   Tooltip,
   LayersControl,
   LayerGroup,
   Popup,
+  Marker,
 } from "react-leaflet";
 import SetViewOnClick from "./SetViewOnClick";
 import MeMarker from "./MeMarker";
@@ -16,6 +16,15 @@ import { getStations } from "../lib/getStations";
 import * as geolib from "geolib";
 import { GeoBias } from "../types/ApiResponse";
 import Loading from "./Loading";
+import { TypeAnimation } from "react-type-animation";
+import L from "leaflet";
+import eaIcon from "/eaanywhere.png";
+
+const stationIcon = L.icon({
+  iconSize: [45, 45],
+  popupAnchor: [2, -20],
+  iconUrl: eaIcon,
+});
 
 function Map({ lat, lon }: { lat: number; lon: number }) {
   const debounceLatLon = useDebounce({ lat, lon }, 5000);
@@ -30,12 +39,6 @@ function Map({ lat, lon }: { lat: number; lon: number }) {
     data?.results,
     (stationNames) => stationNames.poi.name
   );
-
-  Object.keys(stationNames).map((name) => {
-    stationNames[name].map((station) => {
-      console.log(station);
-    });
-  });
 
   const getDistance = ({ geo }: { geo: GeoBias }) => {
     const dist = geolib.getPreciseDistance(geo, {
@@ -70,43 +73,57 @@ function Map({ lat, lon }: { lat: number; lon: number }) {
             <LayersControl.Overlay key={name} checked name={name}>
               <LayerGroup>
                 {stationNames[name].map((station) => (
-                  <Circle
+                  <Marker
                     key={station.id}
-                    center={[station.position.lat, station.position.lon]}
-                    pathOptions={{ fillColor: "red" }}
-                    radius={30}
-                    stroke={true}
-                    color="red"
-                    fillOpacity={0.5}
-                    children={
-                      <>
-                        <div style={{ whiteSpace: "pre-wrap" }}>
-                          <Popup>
-                            {station.address.freeformAddress} <br />
-                            {station.chargingPark.connectors.length} หัวชาจ{" "}
-                            <br />
-                            {station.chargingPark.connectors.map(
-                              (connector) => (
-                                <>{connector.currentType + " "}</>
-                              )
-                            )}
-                          </Popup>
-                        </div>
-                        <Tooltip
-                          direction="top"
-                          offset={[0, 0]}
-                          opacity={1}
-                          permanent
-                        >
-                          {station.poi.name}{" "}
-                          {(
-                            getDistance({ geo: station.position }) / 1000
-                          ).toFixed(2)}{" "}
-                          กม
-                        </Tooltip>
-                      </>
-                    }
-                  />
+                    position={[station.position.lat, station.position.lon]}
+                    icon={stationIcon}
+                  >
+                    <Tooltip
+                      direction="top"
+                      offset={[0, 0]}
+                      opacity={1}
+                      permanent
+                    >
+                      {station.poi.name}
+                      {(getDistance({ geo: station.position }) / 1000).toFixed(
+                        2
+                      )}{" "}
+                      กม
+                    </Tooltip>
+                    <div style={{ whiteSpace: "pre-wrap" }}>
+                      <Popup>
+                        <span>{station.poi.name}</span> <br />
+                        <span>{station.address.freeformAddress}</span> <br />
+                        <span>
+                          {station.chargingPark.connectors.length} หัวชาจ
+                        </span>
+                        <br />
+                        {station.chargingPark.connectors.map(
+                          (connector, idx) => (
+                            <TypeAnimation
+                              key={idx}
+                              sequence={[
+                                `
+                                  หัวจ่าย ${connector.currentType}
+                                  ไฟ ${connector.voltageV} volt
+                                  จ่ายไฟ ${connector.ratedPowerKW} kw
+                                  ประเภทหัวจ่าย ${connector.connectorType}
+                                  `,
+                                1000,
+                              ]}
+                              wrapper="span"
+                              speed={90}
+                              style={{
+                                fontSize: "14px",
+                                whiteSpace: "pre-line",
+                              }}
+                              repeat={Infinity}
+                            />
+                          )
+                        )}
+                      </Popup>
+                    </div>
+                  </Marker>
                 ))}
               </LayerGroup>
             </LayersControl.Overlay>
