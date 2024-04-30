@@ -18,13 +18,16 @@ import { GeoBias } from "../types/ApiResponse";
 import Loading from "./Loading";
 import { TypeAnimation } from "react-type-animation";
 import L from "leaflet";
-import eaIcon from "/eaanywhere.png";
 
-const stationIcon = L.icon({
-  iconSize: [45, 45],
-  popupAnchor: [2, -20],
-  iconUrl: eaIcon,
-});
+import eaIcon from "/eaanywhere.png";
+import changenowIcon from "/changenow.png";
+import pluzIcon from "/pluz.png";
+import meaIcon from "/mea.png";
+import mgIcon from "/mg.png";
+import evatIcon from "/evat.png";
+import teslaIcon from "/tesla.png";
+import peaIcon from "/pea.png";
+import changerIcon from "/changer.png";
 
 function Map({ lat, lon }: { lat: number; lon: number }) {
   const debounceLatLon = useDebounce({ lat, lon }, 5000);
@@ -67,7 +70,7 @@ function Map({ lat, lon }: { lat: number; lon: number }) {
         />
         <LayersControl position="topright">
           <LayersControl.Overlay checked name="You">
-            <MeMarker lat={lat} lon={lon} />
+            <MeMarker lat={debounceLatLon.lat} lon={debounceLatLon.lon} />
           </LayersControl.Overlay>
           {Object.keys(stationNames).map((name) => (
             <LayersControl.Overlay key={name} checked name={name}>
@@ -76,7 +79,27 @@ function Map({ lat, lon }: { lat: number; lon: number }) {
                   <Marker
                     key={station.id}
                     position={[station.position.lat, station.position.lon]}
-                    icon={stationIcon}
+                    icon={L.icon({
+                      iconSize: [45, 45],
+                      popupAnchor: [2, -20],
+                      iconUrl: name.startsWith("อีเอ เอนนี่แวร์")
+                        ? eaIcon
+                        : name.startsWith("ชาร์จนาว")
+                        ? changenowIcon
+                        : name.startsWith("อีวี สเตชั่น พลัส")
+                        ? pluzIcon
+                        : name.startsWith("เอ็มอีเอ")
+                        ? meaIcon
+                        : name.startsWith("อีแวท")
+                        ? evatIcon
+                        : name.startsWith("เอ็มจี")
+                        ? mgIcon
+                        : name.startsWith("เทสล่า")
+                        ? teslaIcon
+                        : name.startsWith("พีอีเอ")
+                        ? peaIcon
+                        : changerIcon,
+                    })}
                   >
                     <Tooltip
                       direction="top"
@@ -95,32 +118,35 @@ function Map({ lat, lon }: { lat: number; lon: number }) {
                         <span>{station.poi.name}</span> <br />
                         <span>{station.address.freeformAddress}</span> <br />
                         <span>
-                          {station.chargingPark.connectors.length} หัวชาจ
+                          {station.chargingPark?.connectors.length &&
+                            station.chargingPark.connectors.length}{" "}
+                          หัวชาจ
                         </span>
                         <br />
-                        {station.chargingPark.connectors.map(
-                          (connector, idx) => (
-                            <TypeAnimation
-                              key={idx}
-                              sequence={[
-                                `
+                        {station.chargingPark?.connectors &&
+                          station.chargingPark.connectors.map(
+                            (connector, idx) => (
+                              <TypeAnimation
+                                key={idx}
+                                sequence={[
+                                  `
                                   หัวจ่าย ${connector.currentType}
                                   ไฟ ${connector.voltageV} volt
                                   จ่ายไฟ ${connector.ratedPowerKW} kw
                                   ประเภทหัวจ่าย ${connector.connectorType}
                                   `,
-                                1000,
-                              ]}
-                              wrapper="span"
-                              speed={90}
-                              style={{
-                                fontSize: "14px",
-                                whiteSpace: "pre-line",
-                              }}
-                              repeat={Infinity}
-                            />
-                          )
-                        )}
+                                  1000,
+                                ]}
+                                wrapper="span"
+                                speed={90}
+                                style={{
+                                  fontSize: "14px",
+                                  whiteSpace: "pre-line",
+                                }}
+                                repeat={Infinity}
+                              />
+                            )
+                          )}
                       </Popup>
                     </div>
                   </Marker>

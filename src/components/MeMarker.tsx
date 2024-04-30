@@ -14,9 +14,15 @@ const icon = L.icon({
   iconUrl: carIcon,
 });
 
-function MeMarker({ lat, lon }: { lat: number; lon: number }) {
+type Props = {
+  lat: number;
+  lon: number;
+};
+
+function MeMarker({ lat, lon }: Props) {
   const [prevPos, setPrevPos] = useState([lat, lon]);
   const [position, setPosition] = useState([lat, lon]);
+
 
   useEffect(() => {
     if (prevPos[1] !== lon && prevPos[0] !== lat) setPrevPos([lat, lon]);
@@ -26,7 +32,9 @@ function MeMarker({ lat, lon }: { lat: number; lon: number }) {
     "stations",
     () => getStations({ lat: position[0], lng: position[1] }),
     {
-      refetchInterval: 2000,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchInterval: 10000,
     }
   );
 
@@ -38,7 +46,6 @@ function MeMarker({ lat, lon }: { lat: number; lon: number }) {
       icon={icon}
       draggable
       position={position as LatLngExpression}
-      // position={[lat, lon]}
       previousPosition={prevPos as LatLngExpression}
       rotationAngle={(Math.atan2(lon, lat) * 180.0) / Math.PI}
       duration={1000}
