@@ -4,9 +4,9 @@ import L, { LatLngExpression } from "leaflet";
 import carIcon from "/car.png";
 import { Tooltip } from "react-leaflet";
 import { TypeAnimation } from "react-type-animation";
-import { useQuery } from "react-query";
 import { getStations } from "../lib/getStations";
 import Loading from "./Loading";
+import { useQuery } from "react-query";
 
 const icon = L.icon({
   iconSize: [45, 45],
@@ -23,7 +23,6 @@ function MeMarker({ lat, lon }: Props) {
   const [prevPos, setPrevPos] = useState([lat, lon]);
   const [position, setPosition] = useState([lat, lon]);
 
-
   useEffect(() => {
     if (prevPos[1] !== lon && prevPos[0] !== lat) setPrevPos([lat, lon]);
   }, [lat, lon, prevPos]);
@@ -32,8 +31,6 @@ function MeMarker({ lat, lon }: Props) {
     "stations",
     () => getStations({ lat: lat, lng: lon }),
     {
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
       refetchInterval: 10000,
     }
   );
@@ -44,7 +41,7 @@ function MeMarker({ lat, lon }: Props) {
   return (
     <LeafletTrackingMarker
       icon={icon}
-      draggable
+      draggable={false}
       eventHandlers={{
         dragend: (event) => {
           setPosition([
