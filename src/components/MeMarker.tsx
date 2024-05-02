@@ -30,7 +30,7 @@ function MeMarker({ lat, lon }: Props) {
 
   const { data, isLoading } = useQuery(
     "stations",
-    () => getStations({ lat: position[0], lng: position[1] }),
+    () => getStations({ lat: lat, lng: lon }),
     {
       refetchOnMount: false,
       refetchOnWindowFocus: false,
@@ -45,19 +45,18 @@ function MeMarker({ lat, lon }: Props) {
     <LeafletTrackingMarker
       icon={icon}
       draggable
-      position={position as LatLngExpression}
-      previousPosition={prevPos as LatLngExpression}
-      rotationAngle={(Math.atan2(lon, lat) * 180.0) / Math.PI}
-      duration={1000}
-      autoPan
       eventHandlers={{
-        moveend: (event) => {
+        dragend: (event) => {
           setPosition([
             event.target.getLatLng().lat,
             event.target.getLatLng().lng,
           ]);
         },
       }}
+      position={position as LatLngExpression}
+      previousPosition={prevPos as LatLngExpression}
+      duration={1000}
+      autoPan
     >
       <Tooltip direction="top" offset={[0, 0]} opacity={1} permanent>
         <TypeAnimation
