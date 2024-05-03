@@ -70,7 +70,7 @@ function Map({ lat, lon }: { lat: number; lon: number }) {
         />
         <LayersControl position="topright">
           <LayersControl.Overlay checked name="You">
-            <MeMarker lat={debounceLatLon.lat} lon={debounceLatLon.lon} />
+            <MeMarker lat={lat} lon={lon} />
           </LayersControl.Overlay>
           {Object.keys(stationNames).map((name) => (
             <LayersControl.Overlay key={name} checked name={name}>
