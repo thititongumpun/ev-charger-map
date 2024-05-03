@@ -29,7 +29,6 @@ function MeMarker({ lat, lon }: Props) {
       position={[lat, lon]}
       previousPosition={prevPos as LatLngExpression}
       duration={1000}
-      autoPan
     >
       <Tooltip direction="top" offset={[0, 0]} opacity={1} permanent>
         <TypeAnimation
